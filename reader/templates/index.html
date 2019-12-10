@@ -1,0 +1,14 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}なろうを読め{% endblock %}
+
+{% block content %}
+<main role="main" class="container">
+    <h1 class="mt-5">なろうを読もう</h1>
+    <p>読んで。</p>
+    <ul>
+        {% for novel in novels %}
+        <li><a href="/view/{{ novel['ncode'] }}">{{ novel['title'] }}</a></li>
+        {% endfor %}
+    </ul>
+</main>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}苦行やん{% endblock %}
+
+{% block content %}
+<main role="main" class="container">
+    <h1 class="mt-5">{{ title }}</h1>
+    <div style="font-size: 18px;">
+        {% autoescape false %}
+        {{ text }}
+        {% endautoescape %}
+    </div>
+</main>
+{% endblock %}
