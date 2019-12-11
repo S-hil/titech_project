@@ -1,3 +1,4 @@
+# coding: utf-8
 import json
 import logging
 
@@ -50,11 +51,10 @@ class Processor(object):
         line = self._extract_kaomoji(line)
         
         # Process conversation
-        # for sentence in self._preprocess()
-
-        # Split a line into one or more sentences
-        for sentence in self._split_line(line):
-            yield sentence
+        for block in self._process_conversations(line):
+            # Split line into sentences
+            for sentence in self._split_line(block):
+                yield sentence
 
     def _remove_trash(self, line):
         logger.warning("Not implemented yet")
@@ -63,6 +63,48 @@ class Processor(object):
     def _extract_kaomoji(self, line):
         logger.warning("Not implemented yet")
         return line
+
+    def _process_conversations(self, line):
+        """ Extract conversations and pass them to _preprocess
+        """
+        bracketsList = [
+            ('「', '」'), ('『', '』'), ('【', '】'),
+            ('（', '）'), ('［', '］'), ('〈', '〉'),
+            ('｛', '｝'), ('《', '》'), ('〔', '〕'),
+            ('〘', '〙'), ('〚', '〛'), ('«', '»'),
+            ('”', '”'), ('"', '"'), ('“', '”'),
+            ('(', ')'), ('[', ']'), ('<', '>'),
+        ]
+        beginTalk = False
+        bracketType = None
+        newLine = ''
+        
+        for c in line:
+            for brackets in bracketsList:
+                if not beginTalk and c == brackets[0]:
+                    # found the beginning of conversation
+                    yield newLine
+                    yield brackets[0]
+                    beginTalk = True
+                    bracketType = brackets[1]
+                    newLine = ''
+                    break
+                
+                elif beginTalk and c == bracketType:
+                    # found the end of conversation
+                    # we need to preprocess this line recursively
+                    # since it's conversation
+                    for sentence in self._preprocess(newLine):
+                        yield sentence
+                    yield brackets[1]
+                    beginTalk = False
+                    newLine = ''
+                    break
+            else:
+                # if c is not a bracket
+                newLine += c
+        
+        yield newLine
 
     def _split_line(self, line):
         logger.warning("Not implemented yet")
