@@ -67,8 +67,8 @@ class Processor(object):
         """
         whitespaceList = [' ', '　']
         seperaterList = [
-            '-', '=', '*', '~'
-            'ー', '＝', '＊', '〜',
+            '-', '=', '*', '~', '+', '/', '\\',
+            'ー', '＝', '＊', '〜', '＋', '／', '＼',
             '★', '☆', '●', '○', '◎',
             '◆', '◇', '■', '□', '❏', '❐',
             '▲', '△', '▼', '▽', '▶', '▷', '◀', '◁',
@@ -124,8 +124,9 @@ class Processor(object):
                     # found the end of conversation
                     # we need to preprocess this line recursively
                     # since it's conversation
-                    for sentence in self._preprocess(newLine):
-                        yield sentence
+                    yield newLine
+                    #for sentence in self._preprocess(newLine):
+                    #    yield sentence
                     yield bracketType
                     beginTalk = False
                     newLine = ''
