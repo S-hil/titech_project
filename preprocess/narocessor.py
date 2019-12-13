@@ -54,11 +54,41 @@ class Processor(object):
         for block in self._process_conversations(line):
             # Split line into sentences
             for sentence in self._split_line(block):
-                yield sentence
+                if sentence != '':
+                    yield sentence
 
     def _remove_trash(self, line):
-        logger.warning("Not implemented yet")
-        return line
+        """ Remove unnecessary line and characters
+        Args:
+            line(str) : Line of sentences
+
+        Returns:
+            str: Line with uncecessary characters removed
+        """
+        whitespaceList = [' ', '　']
+        seperaterList = [
+            '-', '=', '*', '~'
+            'ー', '＝', '＊', '〜',
+            '★', '☆', '●', '○', '◎',
+            '◆', '◇', '■', '□', '❏', '❐',
+            '▲', '△', '▼', '▽', '▶', '▷', '◀', '◁',
+            '♠', '♤', '♦', '♢', '♣', '♧', '♥', '♡',
+            '✤'
+        ]
+
+        # remove whitespaces
+        chars = line
+        for whitespace in whitespaceList:
+            chars = chars.replace(whitespace, '')
+
+        # check if `chars` consists of seperater
+        for c in chars:
+            if c not in seperaterList:
+                break
+        else:
+            return ''
+        
+        return line.strip()
 
     def _extract_kaomoji(self, line):
         logger.warning("Not implemented yet")
@@ -96,7 +126,7 @@ class Processor(object):
                     # since it's conversation
                     for sentence in self._preprocess(newLine):
                         yield sentence
-                    yield brackets[1]
+                    yield bracketType
                     beginTalk = False
                     newLine = ''
                     break
